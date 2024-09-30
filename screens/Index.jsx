@@ -50,8 +50,8 @@ const Index = ({ navigation }) => {
 
             <HStack>
               <Text className="text-gray-700">Forgot Password?</Text>
-              <Link onPress={() => navigation.navigate("PasswordReset")}>
-                <LinkText color="blue">Reset Password</LinkText>
+              <Link onPress={() => navigation.navigate("PasswordChange")}>
+                <LinkText color="blue">Change Password</LinkText>
               </Link>
             </HStack>
           </VStack>

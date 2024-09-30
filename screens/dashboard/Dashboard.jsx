@@ -3,8 +3,9 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BarChart, LineChart, PieChart } from "react-native-chart-kit";
 import Carousel from "react-native-snap-carousel";
+import { Link, LinkText } from "@gluestack-ui/themed";
 
-const Dashboard = () => {
+const Dashboard = ({ navigation }) => {
   const summary = [
     {
       id: 1,
@@ -137,6 +138,11 @@ const Dashboard = () => {
           <Text className="text-3xl font-bold text-orange-400 mb-4 text-center">
             Dashboard
           </Text>
+          <Link onPress={() => navigation.navigate("Profile")}>
+            <LinkText color="blue" backgroundColor="yellow">
+              Go to your Profile
+            </LinkText>
+          </Link>
 
           {/* summary cards */}
           <View className="mb-4">

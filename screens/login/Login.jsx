@@ -26,7 +26,6 @@ import { Button } from "@gluestack-ui/themed";
 import { InputIcon } from "@gluestack-ui/themed";
 
 const Login = ({ navigation }) => {
-  const APIendpoint = "https://dev-api.waficommerce.com/api/account/login";
   const [showPassword, setShowPassword] = useState(false);
   const [userNameOrEmailAddress, setUserNameOrEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -47,7 +46,7 @@ const Login = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        APIendpoint,
+        "https://dev-api.waficommerce.com/api/account/login",
         {
           userNameOrEmailAddress,
           password,
@@ -58,8 +57,6 @@ const Login = ({ navigation }) => {
             accept: "application/json",
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
-            RequestVerificationToken:
-              "CfDJ8CrkdmiiRExJjeF6MViDSvqHARBBqHwXf737JPC_dv5dHbMxYCDI-WNxevStDT-tWAbGR3HMuUmPOA9r6ImC3mCPkdRiQg2O2-xyCxV_i78mMm535_TWdSoXcgNuxlZ9yTdt5mum8DXq0f1djqrswpA",
           },
         }
       );

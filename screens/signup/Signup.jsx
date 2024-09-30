@@ -61,6 +61,7 @@ const Signup = ({ navigation }) => {
             "Content-Type": "application/json",
             accept: "application/json",
             "X-Requested-With": "XMLHttpRequest",
+            __tenant: "Demo",
           },
         }
       );
