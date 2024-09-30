@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   AlertCircleIcon,
   ButtonText,
@@ -26,10 +27,54 @@ import { InputIcon } from "@gluestack-ui/themed";
 
 const Signup = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const [userName, setUserName] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [appName] = useState("WafiCommerce");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleState = () => {
-    setShowPassword((showState) => {
-      return !showState;
-    });
+    setShowPassword((showState) => !showState);
+  };
+
+  const handleSignup = async () => {
+    if (!userName || !emailAddress || !password) {
+      setErrorMessage("All fields are required");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        "https://dev-api.waficommerce.com/api/account/register",
+        {
+          userName,
+          emailAddress,
+          password,
+          appName,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        }
+      );
+
+      // handle success
+      console.log("Signup successful:", response.data);
+      alert("Signup Successful!");
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Signup error:", error.response);
+      setErrorMessage("Signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,17 +91,22 @@ const Signup = ({ navigation }) => {
       >
         <VStack space="xl">
           {/* heading */}
-          <Heading color="$text900" lineHeight="$md">
+          <Heading color="$text500" lineHeight="$md">
             Sign Up to Wafi Commerce
           </Heading>
 
           {/* username field */}
           <VStack space="xs">
-            <Text color="$text500" lineHeight="$xs">
+            <Text color="$text500" bold={true} lineHeight="$xs">
               Name
             </Text>
             <Input>
-              <InputField type="text" placeholder="username" />
+              <InputField
+                type="text"
+                placeholder="username"
+                value={userName}
+                onChangeText={(text) => setUserName(text)}
+              />
             </Input>
           </VStack>
 
@@ -67,7 +117,12 @@ const Signup = ({ navigation }) => {
                 <FormControlLabelText>Email</FormControlLabelText>
               </FormControlLabel>
               <Input>
-                <InputField type="email" placeholder="email address" />
+                <InputField
+                  type="email"
+                  placeholder="email address"
+                  value={emailAddress}
+                  onChangeText={(text) => setEmailAddress(text)}
+                />
               </Input>
               <FormControlHelper>
                 <FormControlHelperText>
@@ -89,8 +144,12 @@ const Signup = ({ navigation }) => {
               <FormControlLabel mb="$1">
                 <FormControlLabelText>Password</FormControlLabelText>
               </FormControlLabel>
-              <Input textAlign="center">
-                <InputField type={showPassword ? "text" : "password"} />
+              <Input>
+                <InputField
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                />
                 <InputSlot pr="$3" onPress={handleState}>
                   {/* EyeIcon, EyeOffIcon are both imported from 'lucide-react-native' */}
                   <InputIcon
@@ -112,12 +171,16 @@ const Signup = ({ navigation }) => {
               </FormControlError>
             </FormControl>
           </VStack>
-          <Button
-            ml="auto"
-            onPress={() => {
-              setShowModal(false);
-            }}
-          >
+
+          {/* error message */}
+          {errorMessage ? (
+            <Text color="red" mb="$2">
+              {errorMessage}
+            </Text>
+          ) : null}
+
+          {/* signup button */}
+          <Button ml="auto" onPress={handleSignup} inLoading={isLoading}>
             <ButtonText color="$white">Sign Up</ButtonText>
           </Button>
         </VStack>
