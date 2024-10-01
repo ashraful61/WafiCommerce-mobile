@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   AlertCircleIcon,
   ButtonText,
   EyeIcon,
+  EyeOffIcon,
   FormControl,
   FormControlError,
   FormControlErrorIcon,
@@ -16,14 +16,13 @@ import {
   Input,
   InputField,
   InputSlot,
+  InputIcon,
   Link,
   LinkText,
   Text,
+  Button,
   VStack,
 } from "@gluestack-ui/themed";
-import { EyeOffIcon } from "@gluestack-ui/themed";
-import { Button } from "@gluestack-ui/themed";
-import { InputIcon } from "@gluestack-ui/themed";
 
 const Signup = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,21 +47,26 @@ const Signup = ({ navigation }) => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "https://dev-api.waficommerce.com/api/account/register",
+      // const response = await axios.post(
+      //   "https://dev-api.waficommerce.com/api/account/register",
+      //   {
+      //     userName,
+      //     emailAddress,
+      //     password,
+      //     appName,
+      //   }
+      // );
+      const response = await fetch(
+        `https://dev-api.waficommerce.com/api/account/register`,
         {
-          userName,
-          emailAddress,
-          password,
-          appName,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            accept: "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            __tenant: "Demo",
-          },
+          method: "POST",
+          body: JSON.stringify({
+            userName,
+            emailAddress,
+            password,
+            appName,
+          }),
+          headers: { "Content-Type": "application/json" },
         }
       );
 
@@ -71,7 +75,8 @@ const Signup = ({ navigation }) => {
       alert("Signup Successful!");
       navigation.navigate("Login");
     } catch (error) {
-      console.error("Signup error:", error.response);
+      console.log("sign up error" + JSON.stringify(error));
+      // console.error("Signup error:", error.response);
       setErrorMessage("Signup failed. Please try again.");
     } finally {
       setIsLoading(false);

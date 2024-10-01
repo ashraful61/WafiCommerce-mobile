@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import {
   AlertCircleIcon,
   ButtonText,
   EyeIcon,
+  EyeOffIcon,
   FormControl,
   FormControlError,
   FormControlErrorIcon,
@@ -16,14 +16,13 @@ import {
   Input,
   InputField,
   InputSlot,
+  InputIcon,
   Link,
   LinkText,
   Text,
+  Button,
   VStack,
 } from "@gluestack-ui/themed";
-import { EyeOffIcon } from "@gluestack-ui/themed";
-import { Button } from "@gluestack-ui/themed";
-import { InputIcon } from "@gluestack-ui/themed";
 
 const Login = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,21 +44,34 @@ const Login = ({ navigation }) => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "https://dev-api.waficommerce.com/api/account/login",
+      const response = await fetch(
+        `https://dev-api.waficommerce.com/api/account/register`,
         {
-          userNameOrEmailAddress,
-          password,
-          rememberMe,
-        },
-        {
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-          },
+          method: "POST",
+          body: JSON.stringify({
+            userNameOrEmailAddress,
+            password,
+            rememberMe,
+          }),
+          headers: { "Content-Type": "application/json" },
         }
       );
+
+      // await axios.post(
+      //   "https://dev-api.waficommerce.com/api/account/login",
+      //   {
+      //     userNameOrEmailAddress,
+      //     password,
+      //     rememberMe,
+      //   },
+      //   {
+      //     headers: {
+      //       // accept: "application/json",
+      //       "Content-Type": "application/json",
+      //       // "X-Requested-With": "XMLHttpRequest",
+      //     },
+      //   }
+      // );
 
       // Handle successful login
       console.log("Login successful:", response.data);
