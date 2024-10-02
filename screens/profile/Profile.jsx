@@ -49,7 +49,7 @@ const Profile = ({ navigation }) => {
     fetchProfile();
   }, []);
 
-  // used axios but it don't work properly
+  // *********  used axios but it don't work properly  *********
   // const response = await axios.get(
   //   "https://dev-api.waficommerce.com/api/account/my-profile",
   //   {

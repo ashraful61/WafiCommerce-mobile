@@ -47,15 +47,6 @@ const Signup = ({ navigation }) => {
 
     setIsLoading(true);
     try {
-      // const response = await axios.post(
-      //   "https://dev-api.waficommerce.com/api/account/register",
-      //   {
-      //     userName,
-      //     emailAddress,
-      //     password,
-      //     appName,
-      //   }
-      // );
       const response = await fetch(
         `https://dev-api.waficommerce.com/api/account/register`,
         {
@@ -76,7 +67,6 @@ const Signup = ({ navigation }) => {
       navigation.navigate("Login");
     } catch (error) {
       console.log("sign up error" + JSON.stringify(error));
-      // console.error("Signup error:", error.response);
       setErrorMessage("Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
