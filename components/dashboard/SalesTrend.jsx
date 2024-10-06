@@ -1,58 +1,70 @@
-import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
+import { View, Text, ScrollView } from "react-native";
+import axios from "axios";
 
-const SalesTrend = () => {
-  const [saleAmount, setSaleAmount] = useState(null);
+const SalesTrendScreen = () => {
+  const [salesData, setSalesData] = useState(null);
   const [error, setError] = useState(null);
 
-  const bearerToken =
-    "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDRjFFRTM0Qjc1MkY5QzUzMkJCODhGMTlDNDRBRkFFQTc5Mjc1M0YiLCJ4NXQiOiJiUEh1TkxkUy1jVXl1NGp4bkVTdnJxZVNkVDgiLCJ0eXAiOiJhdCtqd3QifQ.eyJzdWIiOiIzYTE0NWQ1ZS04NTE5LTZlMWMtMjA1NC0yNjk4ODVlODg0NTkiLCJ0ZW5hbnRpZCI6IjNhMTQ1ZDVlLTg0OWYtOTY3MS0wNmYyLThkNjIwYjAzMGQ0ZSIsInVuaXF1ZV9uYW1lIjoiYWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJGYWxzZSIsInBob25lX251bWJlciI6IjAxNzkyOTQxMDc0IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJvaV9wcnN0IjoiV2FmaUNvbW1lcmNlX0FwcCIsIm9pX2F1X2lkIjoiM2ExNTVmOGEtYjAxOS0yZTQwLTE5NmEtM2Y0ZTVlZTkwYmUyIiwiY2xpZW50X2lkIjoiV2FmaUNvbW1lcmNlX0FwcCIsIm9pX3Rrbl9pZCI6IjNhMTU1ZjhhLWIwM2QtNGM2My04OGE5LTI2Zjg1M2E1ZTcwMiIsImF1ZCI6IldhZmlDb21tZXJjZSIsInNjb3BlIjoiV2FmaUNvbW1lcmNlIG9mZmxpbmVfYWNjZXNzIiwianRpIjoiODZkZWEwYTktN2VkYy00NDY1LWEwMDYtNmZiZjhjYzEwOGM0IiwiaXNzIjoiaHR0cHM6Ly9kZXYtYXBpLndhZmljb21tZXJjZS5jb20vIiwiZXhwIjoxNzI3ODc4NDQ4LCJpYXQiOjE3Mjc4NzQ4NDh9.EhAikjmBHIQ1Dv5P7s6PzzzUCp81hRUkp29AUwXw2s5CiGzgvqtp7MRDCOd9Pu8zFWpsP96GqOtjrHxRCytlcZATTC5vRb7P9ghRwhvuSaC4cXhQiGc6DvV5YAoB1Kw1hjyGpLvplWrcWbYXFmKa_i0286A6vG3J6N85ZEd8cv6CAEeUKF7BtnLJ_0eBnONd2aFDQsBXpABzzPsTTIuDI8lmZN-sZZvVsrLVHc7lFjF1KftAlEn3JFsMiq05AZQvzJs3LATa_1-rs8DKcLUJ0MbXBk6Z_nwlNGwFijfDjysHAprFGMCh1IkzrlZs3tkcYmti8Mt_PTRjz7WVPZZQdw";
-
   useEffect(() => {
-    const fetchData = async () => {
+    // Define the function to fetch data
+    const fetchSalesTrend = async () => {
+      const url =
+        "https://dev-api.waficommerce.com/api/app/my-sale/sales-trend-list";
+      const bearerToken =
+        "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDRjFFRTM0Qjc1MkY5QzUzMkJCODhGMTlDNDRBRkFFQTc5Mjc1M0YiLCJ4NXQiOiJiUEh1TkxkUy1jVXl1NGp4bkVTdnJxZVNkVDgiLCJ0eXAiOiJhdCtqd3QifQ.eyJzdWIiOiIzYTE0NWQ1ZS04NTE5LTZlMWMtMjA1NC0yNjk4ODVlODg0NTkiLCJ0ZW5hbnRpZCI6IjNhMTQ1ZDVlLTg0OWYtOTY3MS0wNmYyLThkNjIwYjAzMGQ0ZSIsInVuaXF1ZV9uYW1lIjoiYWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJGYWxzZSIsInBob25lX251bWJlciI6IjAxNzkyOTQxMDc0IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJvaV9wcnN0IjoiV2FmaUNvbW1lcmNlX0FwcCIsIm9pX2F1X2lkIjoiM2ExNTYzZjItYjljNy1jODg0LWQ5YWYtOWY2MWZlZjhmNzAxIiwiY2xpZW50X2lkIjoiV2FmaUNvbW1lcmNlX0FwcCIsIm9pX3Rrbl9pZCI6IjNhMTU2M2YyLWI5ZDEtMWYzMS01NDlhLThkZGZiNDAzMWRkZSIsImF1ZCI6IldhZmlDb21tZXJjZSIsInNjb3BlIjoiV2FmaUNvbW1lcmNlIG9mZmxpbmVfYWNjZXNzIiwianRpIjoiMjU3ODA5M2ItZTlmYy00MjkzLWEwNTYtMjBjY2FhMjlmOWQ5IiwiaXNzIjoiaHR0cHM6Ly9kZXYtYXBpLndhZmljb21tZXJjZS5jb20vIiwiZXhwIjoxNzI3OTUyMzc1LCJpYXQiOjE3Mjc5NDg3NzV9.DD74PDoOpbvDSgiEzngHn5dnIABVKgX5JN4obAdp5RnH9EM5Cp8_IxyT-SNX86i-K2FUUqypHl22jHEBC--RW_nGRCOdiJg6AUFSeVFsX0BvHJfeCOsuYo-LHrFGxw8nNnApKgYF_FM_JnSoq04-4ESebNHU22Y9XUdAJYdba4yKUs6oIATUEpwftTdXbam055LBHWTDl2BaeOsD6vLodLz4TrqobHHoZGoPQV8l9vwtBOnT3jIn4U23_VWOxOp1SNSPaktxK2XlrN-VhSqztgVTjMbaAPtKMGtznMkThF_hGuqfUIXwDmrgWqH6OEzwWxvo2xJ28FM426lmqYB0MQ"; // Replace with your actual Bearer token
+      const requestVerificationToken =
+        "CfDJ8CrkdmiiRExJjeF6MViDSvphlTd1QFfoPGmSAsUVvuZGF9EHO3GQokMO4XSm0YKIhog0Ex8W30gYWeKAm68aftmyDMG-SSTnmsjij87gziDdf9rCEN9MPZFQCNfTeONju0fwedGIeYIy7nN3NTCmP7-O6E1hxFOUDj7elaXqRE1XjUoG9GkyXMpDyENrm7gA8A";
+
       try {
-        const response = await fetch(
-          "https://dev-api.waficommerce.com/api/app/my-sale/sales-trend-list",
+        const response = await axios.post(
+          url,
           {
-            method: "POST",
+            timeRange: 1,
+          },
+          {
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${bearerToken}`,
+              RequestVerificationToken: requestVerificationToken,
+              "Content-Type": "application/json",
+              accept: "text/plain",
+              "X-Requested-With": "XMLHttpRequest",
             },
-            body: JSON.stringify({
-              timeRange: 2,
-            }),
           }
         );
 
-        // Check the response status
-        if (!response.ok) {
-          const errorText = await response.text(); // Capture the HTML or text response
-          throw new Error(
-            `Request failed with status: ${response.status} - ${errorText}`
-          );
-        }
-
-        const data = await response.json();
-        setSaleAmount(data);
-        console.log(saleAmount);
-      } catch (error) {
-        console.error("Error fetching data:", error.message); // Capture error message
-        setError(error.message);
+        // Set the response data to state
+        setSalesData(response.data);
+      } catch (err) {
+        setError(err.message || "An error occurred");
       }
     };
-    fetchData();
+
+    // Call the function to fetch data
+    fetchSalesTrend();
   }, []);
 
-  if (error) return <Text>Error: {error}</Text>;
-  if (!saleAmount) return <Text>Loading...</Text>;
-
+  // Render the result or error
   return (
-    <View>
-      <Text>SalesTrend</Text>
-      {/* Render your data here */}
-    </View>
+    <ScrollView>
+      <View style={{ padding: 20 }}>
+        {error ? (
+          <Text style={{ color: "red" }}>{error}</Text>
+        ) : (
+          salesData && (
+            <View>
+              <Text>
+                Total Sale Amounts: {JSON.stringify(salesData.totalSaleAmounts)}
+              </Text>
+              <Text>
+                X-Axis Categories: {JSON.stringify(salesData.xaxisCategoryList)}
+              </Text>
+            </View>
+          )
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
-export default SalesTrend;
+export default SalesTrendScreen;
