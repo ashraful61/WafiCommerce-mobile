@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
+import apiClient from "../../services/api-client";
 
 const DefaultBalance = () => {
   const [balances, setBalances] = useState(null);
@@ -36,24 +37,15 @@ const DefaultBalance = () => {
     },
   };
 
-  // fetch default-balances data from API
+  // Fetch default-balances data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://dev-api.waficommerce.com/api/app/dashboard/default-balances?timeRange=2",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${bearerToken}`,
-            },
-          }
+        // Make the API call using apiClient
+        const response = await apiClient.get(
+          "/api/app/dashboard/default-balances?timeRange=2"
         );
-        const data = await response.json();
-        //remove console
-        console.log(data);
-        setBalances(data);
+        setBalances(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

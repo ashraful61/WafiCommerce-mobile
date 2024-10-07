@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AlertCircleIcon,
   ButtonText,
@@ -22,15 +22,44 @@ import {
   Text,
   Button,
   VStack,
+  CheckboxIcon,
+  CheckboxIndicator,
+  CheckboxLabel,
+  CheckIcon,
 } from "@gluestack-ui/themed";
+import * as authService from "../../services/auth-service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Checkbox } from "@gluestack-ui/themed";
 
 const Login = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [tenant, setTenant] = useState("");
   const [userNameOrEmailAddress, setUserNameOrEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Load saved credentials if they exist
+    const loadCredentials = async () => {
+      const savedUsername = await AsyncStorage.getItem("username");
+      const savedPassword = await AsyncStorage.getItem("password");
+      const savedTenant = await AsyncStorage.getItem("tenant");
+
+      if (savedUsername) {
+        setUserNameOrEmailAddress(savedUsername);
+      }
+      if (savedPassword) {
+        setPassword(savedPassword);
+      }
+      if (savedTenant) {
+        setTenant(savedTenant);
+      }
+    };
+
+    loadCredentials();
+  }, []);
 
   const handleState = () => {
     setShowPassword((showState) => !showState);
@@ -44,44 +73,32 @@ const Login = ({ navigation }) => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `https://dev-api.waficommerce.com/api/account/register`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            userNameOrEmailAddress,
-            password,
-            rememberMe,
-          }),
-          headers: { "Content-Type": "application/json" },
+      // Use authService.login to login and get tokens
+      const tokens = await authService.login(
+        userNameOrEmailAddress,
+        password,
+        tenant
+      );
+
+      if (tokens) {
+        // Save credentials if "Remember Me" is checked
+        if (rememberMe) {
+          await AsyncStorage.setItem("username", userNameOrEmailAddress);
+          await AsyncStorage.setItem("password", password);
+          await AsyncStorage.setItem("tenant", tenant);
+        } else {
+          // Clear saved credentials
+          await AsyncStorage.removeItem("username");
+          await AsyncStorage.removeItem("password");
+          await AsyncStorage.removeItem("tenant");
         }
-      );
 
-      // await axios.post(
-      //   "https://dev-api.waficommerce.com/api/account/login",
-      //   {
-      //     userNameOrEmailAddress,
-      //     password,
-      //     rememberMe,
-      //   },
-      //   {
-      //     headers: {
-      //       // accept: "application/json",
-      //       "Content-Type": "application/json",
-      //       // "X-Requested-With": "XMLHttpRequest",
-      //     },
-      //   }
-      // );
-
-      // Handle successful login
-      console.log("Login successful:", response.data);
-      alert("Login Successful!");
-      navigation.navigate("Dashboard"); // Navigate to the dashboard after login
+        // If tokens are returned, navigate to the dashboard
+        console.log("Login successful");
+        navigation.navigate("Dashboard");
+      }
     } catch (error) {
-      console.error(
-        "Login error:",
-        error.response ? error.response.data : error
-      );
+      console.error("Login error:", error);
       setErrorMessage("Login failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -105,6 +122,23 @@ const Login = ({ navigation }) => {
           <Heading color="$text500" lineHeight="$md">
             Login to Wafi Commerce
           </Heading>
+
+          {/* tenant field */}
+          <VStack space="xs">
+            <FormControl size="md" isRequired={true}>
+              <FormControlLabel mb="$1">
+                <FormControlLabelText>Tenant</FormControlLabelText>
+              </FormControlLabel>
+              <Input>
+                <InputField
+                  type="text"
+                  placeholder="Tenant name"
+                  value={tenant}
+                  onChangeText={(text) => setTenant(text)}
+                />
+              </Input>
+            </FormControl>
+          </VStack>
 
           {/* email field */}
           <VStack space="xs">
@@ -160,6 +194,30 @@ const Login = ({ navigation }) => {
               </FormControlError>
             </FormControl>
           </VStack>
+
+          {/* Remember Me checkbox */}
+          <VStack space="xs">
+            <Checkbox
+              size="md"
+              value={rememberMe}
+              onValueChange={setRememberMe}
+              isInvalid={false}
+              isDisabled={false}
+            >
+              <CheckboxIndicator mr="$2">
+                <CheckboxIcon as={CheckIcon} />
+              </CheckboxIndicator>
+              <CheckboxLabel>Remember Me</CheckboxLabel>
+            </Checkbox>
+          </VStack>
+          {/* <VStack space="xs">
+            <Checkbox
+              value={rememberMe}
+              onValueChange={setRememberMe}
+              style={{ marginVertical: 10 }}
+            />
+            <Text>Remember Me</Text>
+          </VStack> */}
 
           {/* Error message */}
           {errorMessage ? (

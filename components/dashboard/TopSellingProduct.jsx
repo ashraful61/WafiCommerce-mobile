@@ -1,38 +1,20 @@
-//modify this code based on sales category page
-
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { BarChart } from "react-native-chart-kit";
+import apiClient from "../../services/api-client"; // Import the API client
 
 const TopSellingProduct = () => {
   const [topSales, setTopSales] = useState([]);
-
-  // Replace with your actual token
-  const bearerToken = "YOUR_BEARER_TOKEN";
 
   // Fetch top selling products data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://dev-api.waficommerce.com/api/app/dashboard/top-sold-product-list?TimeRange=2&TopCount=5",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${bearerToken}`,
-            },
-          }
+        const response = await apiClient.get(
+          "/api/app/dashboard/top-sold-product-list?TimeRange=2&TopCount=5"
         );
 
-        // Check if response is OK
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-
-        const data = await response.json();
-        console.log(data); // Check the data structure
-
+        const data = response.data;
         // Check that the required properties exist in the response
         if (data && data.xaxisCategory && data.seriesData) {
           // Convert result into an array of objects
