@@ -54,6 +54,13 @@ const Index = ({ navigation }) => {
                 <LinkText color="blue">Change Password</LinkText>
               </Link>
             </HStack>
+
+            <HStack>
+              <Text className="text-gray-700">Go to Home Screen.</Text>
+              <Link onPress={() => navigation.navigate("Home")}>
+                <LinkText color="blue">Home</LinkText>
+              </Link>
+            </HStack>
           </VStack>
         </View>
       </ScrollView>

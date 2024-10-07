@@ -7,6 +7,7 @@ import Dashboard from "../screens/dashboard/Dashboard";
 import Index from "../screens/Index";
 import Profile from "../screens/profile/Profile";
 import PasswordChange from "../screens/passwordChange/PasswordChange";
+import Home from "../screens/home/Home";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,11 @@ const Navigation = () => {
         <Stack.Screen
           name="Dashboard"
           component={Dashboard}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Home}
           options={{ headerShown: false }}
         />
         <Stack.Screen
