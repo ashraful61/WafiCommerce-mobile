@@ -7,14 +7,14 @@ import ProductGrids from "../../components/home/ProductGrids";
 // Get the window dimensions
 const { width } = Dimensions.get("window");
 
-const Home = () => {
+const Home = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       {/* banner section */}
       <Banner />
 
       {/* Categories Section */}
-      <Categories />
+      <Categories navigation={navigation} />
 
       {/* Products Section */}
       <ProductGrids />

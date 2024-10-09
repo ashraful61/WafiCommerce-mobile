@@ -4,14 +4,13 @@ import {
   View,
   Image,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
+import apiClient from "../../services/api-client";
+import { Link, LinkText } from "@gluestack-ui/themed";
 
-const Categories = () => {
-  bearerToken =
-    "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDRjFFRTM0Qjc1MkY5QzUzMkJCODhGMTlDNDRBRkFFQTc5Mjc1M0YiLCJ4NXQiOiJiUEh1TkxkUy1jVXl1NGp4bkVTdnJxZVNkVDgiLCJ0eXAiOiJhdCtqd3QifQ.eyJzdWIiOiIzYTE0NWQ1ZS04NTE5LTZlMWMtMjA1NC0yNjk4ODVlODg0NTkiLCJ0ZW5hbnRpZCI6IjNhMTQ1ZDVlLTg0OWYtOTY3MS0wNmYyLThkNjIwYjAzMGQ0ZSIsInVuaXF1ZV9uYW1lIjoiYWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJGYWxzZSIsInBob25lX251bWJlciI6IjAxNzkyOTQxMDc0IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJvaV9wcnN0IjoiV2FmaUNvbW1lcmNlX0FwcCIsIm9pX2F1X2lkIjoiM2ExNTczYTktYTUyYi1mOWMxLTlhMjAtOGIxOGQxODQyZTU2IiwiY2xpZW50X2lkIjoiV2FmaUNvbW1lcmNlX0FwcCIsIm9pX3Rrbl9pZCI6IjNhMTU3M2E5LWE1MzgtMDhjNy05MWM5LTI5NTc2Yzk1OTkyZiIsImF1ZCI6IldhZmlDb21tZXJjZSIsInNjb3BlIjoiV2FmaUNvbW1lcmNlIG9mZmxpbmVfYWNjZXNzIiwianRpIjoiZGUwMzdkOWItY2ZlYS00YmZmLWJlZGYtMTIwNmYyODc5ZjE0IiwiaXNzIjoiaHR0cHM6Ly9kZXYtYXBpLndhZmljb21tZXJjZS5jb20vIiwiZXhwIjoxNzI4MjE2MDIxLCJpYXQiOjE3MjgyMTI0MjF9.mqQzfu7afR5bTolHg4XNmElgRHjpZU7LWnIQgL6PJrGgtmfzaQWLFHAbkyJtP_IUyrU2FlCvu0-n-t1dLe1QXW7inCz4PUcc760wWohE0m1XmalIjm1_xP6ydvpv7xQE3LVigx-fPBOPMIVm5SG8WV-41v0frl2lNdjZVZ6MtC7x4bnfJdy6lCNbgjcPM6_2ypzVmxwdXw4ELvAK3nafmFwXFE4-earmlvYuPpTiiwPB1tI4em0GtxjJXcv-SpJo7FPXFnmWLYTia52cp6R7XuNd0d1yAgxGfy_yJZXgf8gA0DYPHxqJNE8C2Pp-vtu78xWbcUJmdTVsHyePQgVFxA";
+const Categories = ({ navigation }) => {
   const [categories, setCategories] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,23 +31,13 @@ const Categories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "https://dev-api.waficommerce.com/api/app/product-group?MaxResultCount=8",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${bearerToken}`,
-            },
-          }
+        // Using apiClient instead of fetch
+        const response = await apiClient.get(
+          "/api/app/product-group?MaxResultCount=8"
         );
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        setCategories(data.items);
+        // Assuming the response data structure is similar
+        setCategories(response.data.items);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {
@@ -58,12 +47,6 @@ const Categories = () => {
 
     fetchCategories();
   }, []);
-
-  // View More onPress handler
-  const handleViewMore = () => {
-    // Implement navigation or action when "View More" is pressed
-    console.log("View More clicked");
-  };
 
   // Render category item with placeholder images
   const renderCategoryItem = ({ item }) => {
@@ -91,9 +74,9 @@ const Categories = () => {
       {/* Categories Section */}
       <View style={styles.header}>
         <Text style={styles.sectionTitle}>Categories</Text>
-        <TouchableOpacity onPress={handleViewMore}>
-          <Text style={styles.viewMore}>View More</Text>
-        </TouchableOpacity>
+        <Link onPress={() => navigation.navigate("Category")}>
+          <LinkText style={styles.viewMore}>View More</LinkText>
+        </Link>
       </View>
 
       <FlatList

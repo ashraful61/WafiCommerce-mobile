@@ -8,6 +8,7 @@ import Index from "../screens/Index";
 import Profile from "../screens/profile/Profile";
 import PasswordChange from "../screens/passwordChange/PasswordChange";
 import Home from "../screens/home/Home";
+import Category from "../screens/category/Category";
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,11 @@ const Navigation = () => {
         <Stack.Screen
           name="Home"
           component={Home}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Category"
+          component={Category}
           options={{ headerShown: false }}
         />
         <Stack.Screen
