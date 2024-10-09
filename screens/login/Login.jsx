@@ -46,16 +46,26 @@ const Login = ({ navigation }) => {
       const savedUsername = await AsyncStorage.getItem("username");
       const savedPassword = await AsyncStorage.getItem("password");
       const savedTenant = await AsyncStorage.getItem("tenant");
+      const savedRememberMe = await AsyncStorage.getItem("rememberMe");
 
-      if (savedUsername) {
-        setUserNameOrEmailAddress(savedUsername);
+      if (savedRememberMe === "true") {
+        setRememberMe(true);
+        if (savedUsername) {
+          setUserNameOrEmailAddress(savedUsername);
+        }
+        if (savedPassword) {
+          setPassword(savedPassword);
+        }
+        if (savedTenant) {
+          setTenant(savedTenant);
+        }
       }
-      if (savedPassword) {
-        setPassword(savedPassword);
-      }
-      if (savedTenant) {
-        setTenant(savedTenant);
-      }
+      console.log("Loaded Credentials:", {
+        savedUsername,
+        savedPassword,
+        savedTenant,
+        savedRememberMe,
+      });
     };
 
     loadCredentials();
@@ -66,8 +76,8 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    if (!userNameOrEmailAddress || !password) {
-      setErrorMessage("Email and Password are required");
+    if (!userNameOrEmailAddress || !password || !tenant) {
+      setErrorMessage("All fields are required");
       return;
     }
 
@@ -86,12 +96,15 @@ const Login = ({ navigation }) => {
           await AsyncStorage.setItem("username", userNameOrEmailAddress);
           await AsyncStorage.setItem("password", password);
           await AsyncStorage.setItem("tenant", tenant);
+          await AsyncStorage.setItem("rememberMe", "true");
         } else {
           // Clear saved credentials
           await AsyncStorage.removeItem("username");
           await AsyncStorage.removeItem("password");
           await AsyncStorage.removeItem("tenant");
+          await AsyncStorage.setItem("rememberMe", "false");
         }
+        console.log("Remember Me State:", rememberMe);
 
         // If tokens are returned, navigate to the dashboard
         console.log("Login successful");
@@ -200,7 +213,9 @@ const Login = ({ navigation }) => {
             <Checkbox
               size="md"
               value={rememberMe}
-              onValueChange={setRememberMe}
+              onValueChange={(value) => {
+                setRememberMe(value);
+              }}
               isInvalid={false}
               isDisabled={false}
             >
@@ -210,14 +225,6 @@ const Login = ({ navigation }) => {
               <CheckboxLabel>Remember Me</CheckboxLabel>
             </Checkbox>
           </VStack>
-          {/* <VStack space="xs">
-            <Checkbox
-              value={rememberMe}
-              onValueChange={setRememberMe}
-              style={{ marginVertical: 10 }}
-            />
-            <Text>Remember Me</Text>
-          </VStack> */}
 
           {/* Error message */}
           {errorMessage ? (
