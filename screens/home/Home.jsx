@@ -9,7 +9,7 @@ const { width } = Dimensions.get("window");
 
 const Home = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container || {}}>
       {/* banner section */}
       <Banner />
 
